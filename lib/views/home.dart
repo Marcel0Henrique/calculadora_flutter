@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 //* Cores do gradiente
 List<Color> gradientGreen = [
@@ -16,8 +17,8 @@ Color backgroundColor = const Color(0xff2fe0b7);
 Color fontColor = Colors.white;
 
 //* Variaveis para calculo
-String calc = '0';
-String result = '0';
+bool firstOperation = true;
+String result = '0.0';
 
 //* Criando objeto para realizar o calculo
 Parser p = Parser();
@@ -63,52 +64,24 @@ class _HomeState extends State<Home> {
                   8,
                   12,
                 ),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: SizedBox(),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        //* calculo
-                        Text(
-                          '$calc',
-                          //textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.05,
-                          ),
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    //mainAxisSize: MainAxisSize.min,
+                    children: [
+                      //* Resultado
+                      AutoSizeText(
+                        result,
+                        maxLines: 3,
+                        minFontSize: 13,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.15,
                         ),
-
-                        Row(
-                          children: [
-                            //* Sinal do resultado
-                            Text(
-                              '=',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.1,
-                              ),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.09,
-                            ),
-
-                            //* Resultado
-                            Text(
-                              '$result',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.2,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -165,9 +138,11 @@ class _HomeState extends State<Home> {
 
                       //? btn porcentagem
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          addNum('^');
+                        },
                         child: Text(
-                          '%',
+                          '^',
                           style: TextStyle(
                             fontSize: fontsSize,
                             color: gradientGreen[1],
@@ -184,7 +159,9 @@ class _HomeState extends State<Home> {
 
                       //? btn apagar
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          clean();
+                        },
                         child: Icon(
                           Icons.backspace_outlined,
                           size: fontsSize,
@@ -519,7 +496,9 @@ class _HomeState extends State<Home> {
 
                       //? btn porcentagem
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          addNum('0');
+                        },
                         child: Text(
                           '0',
                           style: TextStyle(
@@ -538,9 +517,11 @@ class _HomeState extends State<Home> {
 
                       //? btn apagar
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          addNum('.');
+                        },
                         child: Text(
-                          ',',
+                          '.',
                           style: TextStyle(
                             fontSize: fontsSize,
                             color: fontColor,
@@ -585,21 +566,45 @@ class _HomeState extends State<Home> {
 
   void addNum(String num) {
     setState(() {
-      calc = calc + num;
+      if (firstOperation == true) {
+        result = num;
+        firstOperation = false;
+      } else if (result == 'ERRO') {
+        allClean();
+        firstOperation = false;
+        result = num;
+      } else {
+        result = result + num;
+      }
     });
   }
 
   void allClean() {
     setState(() {
-      calc = '0';
-      result = '0';
+      result = '0.0';
+      firstOperation = true;
+    });
+  }
+
+  void clean() {
+    setState(() {
+      if (firstOperation == false && result.isNotEmpty) {
+        result = result.substring(0, result.length - 1);
+        if (result.isEmpty) {
+          allClean();
+        }
+      }
     });
   }
 
   void calcResult() {
     setState(() {
-      Expression exp = p.parse(calc);
-      result = exp.evaluate(EvaluationType.REAL, ContextModel()).toString();
+      try {
+        Expression exp = p.parse(result);
+        result = exp.evaluate(EvaluationType.REAL, ContextModel()).toString();
+      } catch (e) {
+        result = 'ERRO';
+      }
     });
   }
 }
