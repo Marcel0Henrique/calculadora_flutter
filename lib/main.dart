@@ -1,26 +1,22 @@
+import 'dart:io';
 import 'package:calculadora_flutter/views/home.dart';
 import 'package:flutter/material.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:window_size/window_size.dart';
 
-void main() async {
-  //Fixar tamanho da janela
-  /*
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Must add this line.
-  await windowManager.ensureInitialized();
+  //Fixar tamanho da janela
 
-  // Use it only after calling `hiddenWindowAtLaunch`
-  windowManager.waitUntilReadyToShow().then((_) async {
-    // Hide window title bar
-    await windowManager.setTitle('Calculadora');
-    await windowManager.setSize(const Size(400, 600));
-    await windowManager.center();
-    await windowManager.show();
-    await windowManager.setSkipTaskbar(false);
-    await windowManager.setResizable(false);
-  });
-  */
-  runApp(MyApp());
+  //* Verifica se a plataforma é android
+
+  if (Platform.isAndroid || Platform.isIOS) {
+    runApp(const MyApp());
+  } else {
+    setWindowTitle("Calculadora Flutter");
+    setWindowMaxSize(const Size(350, 550));
+    setWindowMinSize(const Size(350, 550));
+    runApp(const MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {
