@@ -12,7 +12,7 @@ parts:
     source: https://github.com/Marcel0Henrique/calculadora_flutter.git
     flutter-target: lib/main.dart
 
-apps:
-  calculadora:
-    command: super_cool_app
-    extensions: [flutter-dev]
+architectures:
+- build-on: amd64
+- build-on: arm64
+- build-on: armhf
