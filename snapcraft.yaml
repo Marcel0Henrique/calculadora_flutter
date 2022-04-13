@@ -9,7 +9,7 @@ base: core18
 parts:
   calculadora:
     plugin: flutter
-    source: https://github.com/Marcel0Henrique/calculadora_flutter
+    source: https://github.com/Marcel0Henrique/calculadora_flutter.git
     flutter-target: lib/main.dart
 
 apps:
